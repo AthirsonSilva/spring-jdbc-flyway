@@ -30,7 +30,7 @@ public class MovieDataAccessService implements MovieDao {
 					VALUES (?, ?)
 				""";
 
-		return jdbcTemplate.update(sql, movie.name(), movie.releaseDate());
+		return jdbcTemplate.update(sql, movie.getName(), movie.getReleaseDate());
 	}
 
 	@Override
@@ -76,6 +76,6 @@ public class MovieDataAccessService implements MovieDao {
 					WHERE id = ?
 				""";
 
-		return jdbcTemplate.update(sql, movie.name(), movie.releaseDate(), id);
+		return jdbcTemplate.update(sql, movie.getName(), movie.getReleaseDate(), id);
 	}
 }

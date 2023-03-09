@@ -1,9 +1,13 @@
 package com.amigoscode.movie;
 
+import com.amigoscode.actor.Actor;
+import com.amigoscode.actor.ActorDao;
 import com.amigoscode.exception.NotFoundException;
+import com.amigoscode.movie.payload.MovieRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,17 +15,28 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MovieService {
     private final MovieDao movieDao;
+    private final ActorDao actorDao;
 
     public List<Movie> getMovies() {
         return movieDao.selectMovies();
     }
 
-    public void addNewMovie(Movie movie) {
+    public void addNewMovie(MovieRequest movie) {
         if (movieDao.existsByName(movie.name())) {
             throw new IllegalStateException(String.format("movie with given name '%s' already exists", movie.name()));
         }
 
-        int result = movieDao.insertMovie(movie);
+        List<Actor> actors = new ArrayList<>();
+        movie.actors_id().forEach(actorId -> {
+            Actor actor = actorDao.selectActorById(actorId)
+                    .orElseThrow(() -> new NotFoundException(String.format("Actor with id %s not found", actorId)));
+
+            actors.add(actor);
+        });
+
+        Movie movieToInsert = new Movie(null, movie.name(), actors, movie.releaseDate());
+
+        int result = movieDao.insertMovie(movieToInsert);
         if (result != 1) {
             throw new IllegalStateException("oops something went wrong");
         }

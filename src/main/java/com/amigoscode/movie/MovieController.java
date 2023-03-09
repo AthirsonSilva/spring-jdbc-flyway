@@ -1,5 +1,6 @@
 package com.amigoscode.movie;
 
+import com.amigoscode.movie.payload.MovieRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class MovieController {
 	}
 
 	@PostMapping
-	public void addMovie(@RequestBody Movie movie) {
+	public void addMovie(@RequestBody MovieRequest movie) {
 		movieService.addNewMovie(movie);
 	}
 
